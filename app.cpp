@@ -1,4 +1,7 @@
 #include "sumeragi.hpp"
+#include <stdio.h>
+#include <cmath>
+
 
 struct app_t : public sumeragi_t {
   explicit app_t() :
@@ -6,20 +9,52 @@ struct app_t : public sumeragi_t {
   {
     texts.emplace_back(0, 0, "Hello");
     texts.emplace_back(0, 1, "nekosan", attr_t{
-        color_t::white(),  // foreground color
+        color_t::magenta(),  // foreground color
         color_t::black(),  // background color
-        false               // is bold?
+        true               // is bold?
         });
   }
 
   void on_keypressed(char c) override {
-    texts.emplace_back(key_count, 2, std::string{c});
-    key_count++;
+    int H = count;
+    double f = H/60.0 - std::floor(H/60.0);
+    int V = 255;
+    int M = 0;
+    int N = 255 * (1-f);
+    int K = 255 * f;
+    color_t color{};
+    switch ((int)(H/60.0)) {
+    case 0:
+      color.r = 255; color.g = K; color.b = M;
+      break;
+    case 1:
+      color.r = N; color.g = V; color.b = M;
+      break;
+    case 2:
+      color.r = M; color.g = V; color.b = K;
+      break;
+    case 3:
+      color.r = M; color.g = N; color.b = V;
+      break;
+    case 4:
+      color.r = K; color.g = M; color.b = V;
+      break;
+    case 5:
+      color.r = V; color.g = M; color.b = N;
+      break;
+    }
+    texts.emplace_back(count/10, line_count, std::string{c}, attr_t {
+        color, color_t::black(), false
+    });
+    count = (count + 10) % 360;
+    if (count == 0)
+      ++line_count;
     if (c == 'q')
       is_quit = true;
   }
   bool is_quit = false;
-  int key_count = 0;
+  int count = 0;
+  int line_count = 2;
 };
 
 int main() {
