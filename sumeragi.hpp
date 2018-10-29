@@ -5,21 +5,29 @@
 #include <vector>
 #include <string>
 
+#define DEF_COLOR(X, R, G, B) static color_t X() {\
+  return color_t{R, G, B}; \
+}
+
 struct color_t {
-  unsigned char red, green, blue;
+  unsigned char r, g, b;
   explicit color_t(unsigned char r, unsigned char g, unsigned char b) :
-    red{r}, green{g}, blue{b}
+    r{r}, g{g}, b{b}
   {}
   explicit color_t() :
-    red{}, green{}, blue{}
+    r{}, g{}, b{}
   {}
-  static color_t white() {
-    return color_t{255, 255, 255};
-  }
-  static color_t black() {
-    return color_t{0, 0, 0};
-  }
+  DEF_COLOR(white, 255, 255, 255)
+  DEF_COLOR(black,   0,   0,   0)
+  DEF_COLOR(red,   255,   0,   0)
+  DEF_COLOR(green,   0, 255,   0)
+  DEF_COLOR(blue,    0,   0, 255)
+  DEF_COLOR(cyan,    0, 255, 255)
+  DEF_COLOR(magenta, 255, 0, 255)
+  DEF_COLOR(yellow,  0, 255, 255)
 };
+
+#undef DEF_COLOR
 
 struct attr_t {
   color_t foreground;
