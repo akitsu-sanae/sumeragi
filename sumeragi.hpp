@@ -33,6 +33,15 @@ struct attr_t {
   color_t foreground;
   color_t background;
   bool is_bold;
+
+  explicit attr_t() :
+    foreground{color_t::white()},
+    background{color_t::black()},
+    is_bold{false}
+  {}
+  explicit attr_t(color_t const& fore, color_t const& back, bool is_bold) :
+    foreground{fore}, background{back}, is_bold{is_bold}
+  {}
 };
 
 struct text_t {

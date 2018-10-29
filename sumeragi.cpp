@@ -53,7 +53,7 @@ void sumeragi_t::draw() const {
   for (auto const& text : texts) {
     auto const& attr = text.attr;
     printf("\033[%d;%dH\033[38;2;%d;%d;%dm\033[48;2;%d;%d;%dm%s%s\033[0m",
-        text.y, text.x,
+        text.y+1, text.x+1,
         attr.foreground.r, attr.foreground.g, attr.foreground.b,
         attr.background.r, attr.background.g, attr.background.b,
         attr.is_bold ? "\033[1m" : "",
