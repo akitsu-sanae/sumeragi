@@ -4,6 +4,7 @@
 #include <termios.h>
 #include <vector>
 #include <string>
+#include <memory>
 
 #define DEF_COLOR(X, R, G, B) static color_t X() {\
   return color_t{R, G, B}; \
@@ -44,7 +45,12 @@ struct attr_t {
   {}
 };
 
-struct text_t {
+struct object_t {
+  virtual void print() const = 0;
+  virtual ~object_t() = default;
+};
+
+struct text_t : public object_t {
   int x, y;
   std::string content;
   attr_t attr;
@@ -55,6 +61,29 @@ struct text_t {
   explicit text_t(int x, int y, std::string const& content) :
     x{x}, y{y}, content{content}
   {}
+
+  void print() const override;
+};
+
+struct powerline_t : public object_t {
+  struct elem_t {
+    std::string content;
+    attr_t attr;
+
+    explicit elem_t(std::string const& content, attr_t const& attr) :
+      content{content}, attr{attr}
+    {}
+  };
+  int x, y;
+  std::vector<elem_t> line;
+
+  explicit powerline_t(int x, int y, std::vector<elem_t> const& elems) :
+    x{x}, y{y}, line{elems}
+  {}
+  explicit powerline_t(int x, int y) :
+    x{x}, y{y}
+  {}
+  void print() const override;
 };
 
 struct sumeragi_t {
@@ -64,7 +93,7 @@ struct sumeragi_t {
   virtual void on_keypressed(char c) = 0;
   ~sumeragi_t();
 protected:
-  std::vector<text_t> texts;
+  std::vector<std::shared_ptr<object_t>> objects;
 private:
   struct termios origin;
   int inout;
