@@ -8,18 +8,6 @@
 
 #include "sumeragi.hpp"
 
-static char getch() {
-  struct termios old_attr, new_attr;
-  char c;
-  tcgetattr(STDIN_FILENO, &old_attr);
-  new_attr = old_attr;
-  new_attr.c_lflag &= ~(ICANON | ECHO);
-  tcsetattr(STDIN_FILENO, TCSANOW, &new_attr);
-  c = getchar();
-  tcsetattr(STDIN_FILENO, TCSANOW, &old_attr);
-  return c;
-}
-
 sumeragi_t::sumeragi_t() {
   int inout = open("/dev/tty", O_RDWR);
 
@@ -46,7 +34,7 @@ sumeragi_t::~sumeragi_t() {
 }
 
 void sumeragi_t::update() {
-  on_keypressed(getch());
+  on_keypressed(getchar());
 }
 
 void sumeragi_t::draw() const {
